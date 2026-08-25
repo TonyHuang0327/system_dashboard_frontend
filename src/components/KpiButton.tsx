@@ -1,9 +1,18 @@
 import { Button, Stack, Typography } from "@mui/material";
 import { useCpuMetrics, useDiskMetrics, useRamMetrics } from "../queries";
+import type { ChartMode } from "../types";
 
 const kbToGiB = (kb: number) => kb / (1024 * 1024);
 
-export const KpiButtonGroup = () => {
+type KpiButtonGroupProps = {
+  chartMode: ChartMode;
+  onChartModeChange: (mode: ChartMode) => void;
+};
+
+export const KpiButtonGroup = ({
+  chartMode,
+  onChartModeChange,
+}: KpiButtonGroupProps) => {
   const cpu = useCpuMetrics();
   const ram = useRamMetrics();
   const disk = useDiskMetrics();
@@ -26,6 +35,8 @@ export const KpiButtonGroup = () => {
     <Stack spacing={1} sx={{ width: "20%", minWidth: 0 }}>
       <KpiButton
         label="CPU"
+        selected={chartMode === "cpu"}
+        onClick={() => onChartModeChange("cpu")}
         primary={cpu.data !== undefined ? `${cpu.data.usage}%` : undefined}
         details={
           cpu.data ? [cpu.data.name, `${cpu.data.temperature} °C`] : undefined
@@ -39,6 +50,8 @@ export const KpiButtonGroup = () => {
       />
       <KpiButton
         label="RAM"
+        selected={chartMode === "ram"}
+        onClick={() => onChartModeChange("ram")}
         primary={ramPercent !== undefined ? `${ramPercent}%` : undefined}
         details={
           ram.data
@@ -56,6 +69,8 @@ export const KpiButtonGroup = () => {
       />
       <KpiButton
         label="Disk"
+        selected={chartMode === "disk"}
+        onClick={() => onChartModeChange("disk")}
         primary={diskPercent !== undefined ? `${diskPercent}%` : undefined}
         details={
           disk.data
@@ -83,6 +98,8 @@ type KpiButtonProps = {
   isPending: boolean;
   isError: boolean;
   errorMessage?: string;
+  selected: boolean;
+  onClick: () => void;
 };
 
 export const KpiButton = ({
@@ -93,6 +110,8 @@ export const KpiButton = ({
   isPending,
   isError,
   errorMessage,
+  selected,
+  onClick,
 }: KpiButtonProps) => {
   const statusColor = isError || isHigh ? "error.main" : "success.main";
 
@@ -100,9 +119,11 @@ export const KpiButton = ({
     <Button
       variant="contained"
       title={isError ? errorMessage : undefined}
+      aria-pressed={selected}
+      onClick={onClick}
       sx={{
-        border: "1px solid",
-        borderColor: "divider",
+        border: "2px solid",
+        borderColor: selected ? "success.main" : "divider",
         borderRadius: 1,
         height: "100%",
         flexDirection: "column",
