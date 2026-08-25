@@ -23,7 +23,7 @@ export const KpiButtonGroup = () => {
       : undefined;
 
   return (
-    <Stack spacing={1} sx={{ width: "30%", minWidth: 0 }}>
+    <Stack spacing={1} sx={{ width: "20%", minWidth: 0 }}>
       <KpiButton
         label="CPU"
         primary={cpu.data !== undefined ? `${cpu.data.usage}%` : undefined}

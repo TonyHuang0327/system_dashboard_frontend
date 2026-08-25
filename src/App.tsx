@@ -1,4 +1,5 @@
-import { Box, Stack, Typography } from '@mui/material'
+import { Stack, Typography } from '@mui/material'
+import { CpuHistoryChart } from './components/CpuHistoryChart'
 import { KpiButtonGroup } from './components/KpiButton'
 
 function App() {
@@ -11,18 +12,9 @@ function App() {
       <Typography variant="h5">System Dashboard</Typography>
       <Stack direction="row" spacing={1} sx={{ flex: 1, minHeight: 0 }}>
         <KpiButtonGroup />
-        <Box
-          sx={{
-            width: '70%',
-            minWidth: 0,
-            border: '1px solid',
-            borderColor: 'divider',
-            borderRadius: 1,
-            p: 1,
-          }}
-        >
-          折線圖
-        </Box>
+        <Stack sx={{ width: '80%', minWidth: 0, minHeight: 0 }}>
+          <CpuHistoryChart />
+        </Stack>
       </Stack>
     </Stack>
   )
