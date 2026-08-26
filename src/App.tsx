@@ -9,6 +9,7 @@ import {
 import { KpiButtonGroup } from "./components/KpiButton";
 import { MetricsHistoryChart } from "./components/MetricsHistoryChart";
 import { setMetricsScenario } from "./lib/api";
+import { isMockingEnabled } from "./lib/mocking";
 import type { ChartMode, MetricsScenario } from "./types";
 
 function App() {
@@ -49,25 +50,27 @@ function App() {
         }}
       >
         <Typography variant="h5">System Dashboard</Typography>
-        <Stack spacing={0.5} sx={{ minWidth: 0 }}>
-          <ToggleButtonGroup
-            exclusive
-            size="small"
-            value={scenario}
-            onChange={handleScenarioChange}
-            aria-label="Test scenario"
-          >
-            <ToggleButton value="normal" aria-label="Normal">
-              Normal
-            </ToggleButton>
-            <ToggleButton value="high" aria-label="High load">
-              High load
-            </ToggleButton>
-            <ToggleButton value="error" aria-label="Offline">
-              Offline
-            </ToggleButton>
-          </ToggleButtonGroup>
-        </Stack>
+        {import.meta.env.DEV && isMockingEnabled() && (
+          <Stack spacing={0.5} sx={{ minWidth: 0 }}>
+            <ToggleButtonGroup
+              exclusive
+              size="small"
+              value={scenario}
+              onChange={handleScenarioChange}
+              aria-label="Test scenario"
+            >
+              <ToggleButton value="normal" aria-label="Normal">
+                Normal
+              </ToggleButton>
+              <ToggleButton value="high" aria-label="High load">
+                High load
+              </ToggleButton>
+              <ToggleButton value="error" aria-label="Offline">
+                Offline
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </Stack>
+        )}
       </Stack>
       <Stack
         direction={{ xs: "column", sm: "row" }}
