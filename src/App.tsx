@@ -25,7 +25,7 @@ function App() {
     }
     setMetricsScenario(next);
     setScenario(next);
-    void queryClient.invalidateQueries();
+    void queryClient.resetQueries();
   };
 
   return (
@@ -55,20 +55,16 @@ function App() {
             size="small"
             value={scenario}
             onChange={handleScenarioChange}
-            aria-label="測試場景"
-            sx={{
-              flexWrap: "wrap",
-              "& .MuiToggleButton-root": { minHeight: 44, px: 1.5 },
-            }}
+            aria-label="Test scenario"
           >
-            <ToggleButton value="normal" aria-label="正常">
-              正常
+            <ToggleButton value="normal" aria-label="Normal">
+              Normal
             </ToggleButton>
-            <ToggleButton value="high" aria-label="高負載">
-              高負載
+            <ToggleButton value="high" aria-label="High load">
+              High load
             </ToggleButton>
-            <ToggleButton value="error" aria-label="斷線">
-              斷線
+            <ToggleButton value="error" aria-label="Offline">
+              Offline
             </ToggleButton>
           </ToggleButtonGroup>
         </Stack>
@@ -84,7 +80,7 @@ function App() {
         />
         <Stack
           sx={{
-            width: { xs: "100%", sm: "80%" },
+            width: { xs: "100%", sm: "70%" },
             minWidth: 0,
             height: { xs: 280, sm: "100%" },
             flex: { sm: 1 },

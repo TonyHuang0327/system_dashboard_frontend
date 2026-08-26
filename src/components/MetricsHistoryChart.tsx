@@ -1,4 +1,4 @@
-import { Box, Paper, Skeleton, Typography } from "@mui/material";
+import { Box, Paper, Skeleton, Typography, useTheme } from "@mui/material";
 import { LineChart } from "@mui/x-charts/LineChart";
 import { useCpuHistory } from "../hooks/useCpuHistory";
 import { useDiskHistory } from "../hooks/useDiskHistory";
@@ -19,6 +19,7 @@ type MetricsHistoryChartProps = {
 };
 
 export function MetricsHistoryChart({ mode }: MetricsHistoryChartProps) {
+  const theme = useTheme();
   const cpuHistory = useCpuHistory();
   const ramHistory = useRamHistory();
   const diskHistory = useDiskHistory();
@@ -32,6 +33,10 @@ export function MetricsHistoryChart({ mode }: MetricsHistoryChartProps) {
   const query =
     mode === "cpu" ? cpuQuery : mode === "ram" ? ramQuery : diskQuery;
   const xLabels = history.map((item) => formatTick(item.timestamp));
+  const isHigh = (history.at(-1)?.usage ?? 0) >= 80;
+  const lineColor = isHigh
+    ? theme.palette.error.main
+    : theme.palette.success.main;
   const showError = query.isError && history.length < 2;
   const showSkeleton = !showError && history.length < 2;
 
@@ -56,7 +61,7 @@ export function MetricsHistoryChart({ mode }: MetricsHistoryChartProps) {
       </Typography>
       {showError ? (
         <Typography variant="body2" color="error.main" sx={{ py: 1 }}>
-          無法繪製 {title} 趨勢
+          Unable to render {title} trend
         </Typography>
       ) : showSkeleton ? (
         <Box aria-busy sx={{ flex: 1, minHeight: 0, width: "100%", pt: 1 }}>
@@ -71,7 +76,7 @@ export function MetricsHistoryChart({ mode }: MetricsHistoryChartProps) {
                 id: "usage",
                 data: history.map((item) => item.usage),
                 label: "Usage %",
-                color: "#22C55E",
+                color: lineColor,
                 area: true,
               },
             ]}

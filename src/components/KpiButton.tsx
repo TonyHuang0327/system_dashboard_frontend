@@ -35,7 +35,7 @@ export const KpiButtonGroup = ({
     <Stack
       spacing={1}
       sx={{
-        width: { xs: "100%", sm: "20%" },
+        width: { xs: "100%", sm: "30%" },
         minWidth: 0,
         height: { sm: "100%" },
       }}
@@ -112,7 +112,7 @@ export const KpiButton = ({
   onClick,
 }: KpiButtonProps) => {
   const hasData = primary !== undefined;
-  const statusColor = isHigh ? "error.main" : "success.main";
+  const statusColor = isHigh ? "error" : "success";
 
   const onKeyDown = (event: KeyboardEvent) => {
     if (event.key === "Enter" || event.key === " ") {
@@ -193,7 +193,7 @@ export const KpiButton = ({
       ) : isError ? (
         <Stack spacing={0.75} sx={{ width: "100%", minWidth: 0 }}>
           <Typography variant="body2" color="error.main">
-            無法取得 {label} 資料
+            Unable to load {label} data
           </Typography>
           <Typography
             role="alert"
@@ -206,7 +206,7 @@ export const KpiButton = ({
               WebkitBoxOrient: "vertical",
             }}
           >
-            {errorMessage ?? "請稍後再試"}
+            {errorMessage ?? "Please try again later"}
           </Typography>
           <Typography
             variant="caption"
@@ -218,7 +218,7 @@ export const KpiButton = ({
               WebkitBoxOrient: "vertical",
             }}
           >
-            5秒後重試...
+            Retrying in 5 seconds...
           </Typography>
         </Stack>
       ) : (
