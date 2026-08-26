@@ -1,4 +1,7 @@
-/** CPU 當下快照 */
+/** Test scenario: normal hits the real API; others are mocked via MSW */
+export type MetricsScenario = "normal" | "high" | "error";
+
+/** CPU snapshot */
 export type CpuResponse = {
   cpuName: string
   coreNumber: number
@@ -7,14 +10,14 @@ export type CpuResponse = {
   timestamp: string
 }
 
-/** 整機 RAM 當下快照；total / used 單位為 byte */
+/** RAM snapshot; total / used are in bytes */
 export type RamResponse = {
   total: number
   used: number
   timestamp: string
 }
 
-/** 磁碟當下快照 */
+/** Disk snapshot */
 export type DiskResponse = {
   total: number
   used: number

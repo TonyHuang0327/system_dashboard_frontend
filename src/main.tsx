@@ -4,10 +4,11 @@ import App from "./App.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { theme } from "./theme.ts";
-const useMocking = import.meta.env.VITE_ENABLE_MOCKING;
+import { isMockingEnabled } from "./lib/mocking";
 const queryClient = new QueryClient();
 async function enableMocking() {
-  if (!import.meta.env.DEV || useMocking === "false") {
+  // import.meta.env.DEV 需寫在此，production 才能刪掉下方的 MSW 動態 import
+  if (!import.meta.env.DEV || !isMockingEnabled()) {
     return;
   }
 
