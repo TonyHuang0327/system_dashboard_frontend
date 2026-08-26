@@ -1,14 +1,9 @@
 import { useEffect, useState } from "react";
 import { useDiskMetrics } from "../queries";
 
-export type DiskHistorySlice = {
-  disk_name: string;
-  usage: number;
-};
-
 export type DiskHistoryPoint = {
   timestamp: string;
-  disks: DiskHistorySlice[];
+  usage: number;
 };
 
 const MAX_POINTS = 10;
@@ -32,10 +27,7 @@ export function useDiskHistory() {
         ...prev,
         {
           timestamp: data.timestamp,
-          disks: data.disks.map((item) => ({
-            disk_name: item.disk_name,
-            usage: Math.round((item.used / item.max) * 100),
-          })),
+          usage: Math.round((data.used / data.total) * 100),
         },
       ].slice(-MAX_POINTS);
     });

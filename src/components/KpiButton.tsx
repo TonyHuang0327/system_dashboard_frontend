@@ -2,7 +2,10 @@ import { Button, Stack, Typography } from "@mui/material";
 import { useCpuMetrics, useDiskMetrics, useRamMetrics } from "../queries";
 import type { ChartMode } from "../types";
 
-const kbToGiB = (kb: number) => kb / (1024 * 1024);
+const bytesToGiB = (bytes: number) => bytes / 1024 ** 3;
+
+const usedOverTotal = (used: number, total: number) =>
+  `${bytesToGiB(used).toFixed(0)} / ${bytesToGiB(total).toFixed(0)} GB`;
 
 type KpiButtonGroupProps = {
   chartMode: ChartMode;
@@ -19,16 +22,12 @@ export const KpiButtonGroup = ({
 
   const ramPercent =
     ram.data !== undefined
-      ? Math.round((ram.data.used / ram.data.max) * 100)
+      ? Math.round((ram.data.used / ram.data.total) * 100)
       : undefined;
 
   const diskPercent =
     disk.data !== undefined
-      ? Math.round(
-          (disk.data.disks.reduce((sum, item) => sum + item.used, 0) /
-            disk.data.disks.reduce((sum, item) => sum + item.max, 0)) *
-            100,
-        )
+      ? Math.round((disk.data.used / disk.data.total) * 100)
       : undefined;
 
   return (
@@ -39,7 +38,9 @@ export const KpiButtonGroup = ({
         onClick={() => onChartModeChange("cpu")}
         primary={cpu.data !== undefined ? `${cpu.data.usage}%` : undefined}
         details={
-          cpu.data ? [cpu.data.name, `${cpu.data.temperature} °C`] : undefined
+          cpu.data
+            ? [cpu.data.cpuName, `${cpu.data.coreNumber} cores`]
+            : undefined
         }
         isHigh={cpu.data !== undefined && cpu.data.usage >= 80}
         isPending={cpu.isPending}
@@ -55,9 +56,7 @@ export const KpiButtonGroup = ({
         primary={ramPercent !== undefined ? `${ramPercent}%` : undefined}
         details={
           ram.data
-            ? [
-                `${kbToGiB(ram.data.used).toFixed(0)} / ${kbToGiB(ram.data.max).toFixed(0)} GB`,
-              ]
+            ? [usedOverTotal(ram.data.used, ram.data.total)]
             : undefined
         }
         isHigh={ramPercent !== undefined && ramPercent >= 80}
@@ -74,9 +73,7 @@ export const KpiButtonGroup = ({
         primary={diskPercent !== undefined ? `${diskPercent}%` : undefined}
         details={
           disk.data
-            ? disk.data.disks.map(
-                (item) => `${item.disk_name} ${item.temperature} °C`,
-              )
+            ? [usedOverTotal(disk.data.used, disk.data.total)]
             : undefined
         }
         isHigh={diskPercent !== undefined && diskPercent >= 80}

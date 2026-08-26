@@ -4,10 +4,10 @@ import App from "./App.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { theme } from "./theme.ts";
-
+const useMocking = import.meta.env.VITE_ENABLE_MOCKING;
 const queryClient = new QueryClient();
 async function enableMocking() {
-  if (!import.meta.env.DEV) {
+  if (!import.meta.env.DEV || useMocking === "false") {
     return;
   }
 
