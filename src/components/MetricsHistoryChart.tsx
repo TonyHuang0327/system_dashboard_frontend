@@ -1,8 +1,9 @@
-import { Box, Paper, Typography } from "@mui/material";
+import { Box, Paper, Skeleton, Typography } from "@mui/material";
 import { LineChart } from "@mui/x-charts/LineChart";
 import { useCpuHistory } from "../hooks/useCpuHistory";
 import { useDiskHistory } from "../hooks/useDiskHistory";
 import { useRamHistory } from "../hooks/useRamHistory";
+import { useCpuMetrics, useDiskMetrics, useRamMetrics } from "../queries";
 import type { ChartMode } from "../types";
 
 const formatTick = (timestamp: string) =>
@@ -21,11 +22,18 @@ export function MetricsHistoryChart({ mode }: MetricsHistoryChartProps) {
   const cpuHistory = useCpuHistory();
   const ramHistory = useRamHistory();
   const diskHistory = useDiskHistory();
+  const cpuQuery = useCpuMetrics();
+  const ramQuery = useRamMetrics();
+  const diskQuery = useDiskMetrics();
 
   const title = mode === "cpu" ? "CPU" : mode === "ram" ? "RAM" : "Disk";
   const history =
     mode === "cpu" ? cpuHistory : mode === "ram" ? ramHistory : diskHistory;
+  const query =
+    mode === "cpu" ? cpuQuery : mode === "ram" ? ramQuery : diskQuery;
   const xLabels = history.map((item) => formatTick(item.timestamp));
+  const showError = query.isError && history.length < 2;
+  const showSkeleton = !showError && history.length < 2;
 
   return (
     <Paper
@@ -37,7 +45,7 @@ export function MetricsHistoryChart({ mode }: MetricsHistoryChartProps) {
         minHeight: 0,
         p: 1,
         border: 1,
-        borderColor: "divider",
+        borderColor: showError ? "error.main" : "divider",
         bgcolor: "background.paper",
         display: "flex",
         flexDirection: "column",
@@ -46,10 +54,14 @@ export function MetricsHistoryChart({ mode }: MetricsHistoryChartProps) {
       <Typography variant="subtitle1" component="h2">
         {title}
       </Typography>
-      {history.length < 2 ? (
-        <Typography variant="body2" color="text.secondary">
-          Waiting for samples…
+      {showError ? (
+        <Typography variant="body2" color="error.main" sx={{ py: 1 }}>
+          無法繪製 {title} 趨勢
         </Typography>
+      ) : showSkeleton ? (
+        <Box aria-busy sx={{ flex: 1, minHeight: 0, width: "100%", pt: 1 }}>
+          <Skeleton variant="rounded" height="100%" width="100%" />
+        </Box>
       ) : (
         <Box sx={{ flex: 1, minHeight: 0, width: "100%" }}>
           <LineChart

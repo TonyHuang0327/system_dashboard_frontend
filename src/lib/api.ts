@@ -14,7 +14,8 @@ export async function apiClient<T = unknown>(
     ...options,
   });
   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+    const message = (await response.text()).trim();
+    throw new Error(message || `HTTP error! status: ${response.status}`);
   }
   return response.json() as Promise<T>;
 }

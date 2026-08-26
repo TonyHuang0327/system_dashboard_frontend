@@ -12,6 +12,7 @@ export const handlers = [
       timestamp: new Date().toISOString(),
     };
     return HttpResponse.json(body);
+    // return new HttpResponse("cpu read failed", { status: 500 });
   }),
   http.get("*/api/ram", () => {
     const body: RamResponse = {
@@ -20,6 +21,7 @@ export const handlers = [
       timestamp: new Date().toISOString(),
     };
     return HttpResponse.json(body);
+    // return new HttpResponse("ram read failed", { status: 500 });
   }),
   http.get("*/api/disk", () => {
     const body: DiskResponse = {
@@ -28,5 +30,6 @@ export const handlers = [
       timestamp: new Date().toISOString(),
     };
     return HttpResponse.json(body);
+    // return new HttpResponse("disk read failed", { status: 500 });
   }),
 ];
