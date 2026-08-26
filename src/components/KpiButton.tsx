@@ -1,4 +1,4 @@
-import { Box, Skeleton, Stack, Typography, useMediaQuery } from "@mui/material";
+import { Box, Skeleton, Stack, Typography } from "@mui/material";
 import { type KeyboardEvent } from "react";
 import { useCpuMetrics, useDiskMetrics, useRamMetrics } from "../queries";
 import type { ChartMode } from "../types";
@@ -31,11 +31,14 @@ export const KpiButtonGroup = ({
       ? Math.round((disk.data.used / disk.data.total) * 100)
       : undefined;
 
-  const isSmallScreen = useMediaQuery("(max-width: 600px)");
   return (
     <Stack
       spacing={1}
-      sx={{ width: isSmallScreen ? "100%" : "20%", minWidth: 0 }}
+      sx={{
+        width: { xs: "100%", sm: "20%" },
+        minWidth: 0,
+        height: { sm: "100%" },
+      }}
     >
       <KpiButton
         label="CPU"
@@ -134,7 +137,7 @@ export const KpiButton = ({
               ? "success.main"
               : "divider",
         borderRadius: 1,
-        height: "100%",
+        height: { xs: "auto", sm: "100%" },
         display: "flex",
         flexDirection: "column",
         alignItems: "flex-start",
