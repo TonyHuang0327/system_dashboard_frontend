@@ -1,3 +1,6 @@
+/** 測試場景：正常打真實 API，其餘由 MSW 依 query 模擬 */
+export type MetricsScenario = "normal" | "high" | "error";
+
 /** CPU 當下快照 */
 export type CpuResponse = {
   cpuName: string
