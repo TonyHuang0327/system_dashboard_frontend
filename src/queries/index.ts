@@ -8,8 +8,9 @@ import { metricsKeys } from "./key";
 
 const metricsQueryOptions = {
   retry: 1,
-  refetchInterval: (query) => (query.state.status === "success" ? 1000 : 5000),
-} as const;
+  refetchInterval: (query: { state: { status: string } }) =>
+    query.state.status === "success" ? 1000 : 5000,
+};
 
 export function useCpuMetrics() {
   return useQuery({
