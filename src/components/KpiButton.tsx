@@ -1,4 +1,5 @@
-import { Button, Stack, Typography } from "@mui/material";
+import { Box, Skeleton, Stack, Typography, useMediaQuery } from "@mui/material";
+import { type KeyboardEvent } from "react";
 import { useCpuMetrics, useDiskMetrics, useRamMetrics } from "../queries";
 import type { ChartMode } from "../types";
 
@@ -30,8 +31,12 @@ export const KpiButtonGroup = ({
       ? Math.round((disk.data.used / disk.data.total) * 100)
       : undefined;
 
+  const isSmallScreen = useMediaQuery("(max-width: 600px)");
   return (
-    <Stack spacing={1} sx={{ width: "20%", minWidth: 0 }}>
+    <Stack
+      spacing={1}
+      sx={{ width: isSmallScreen ? "100%" : "20%", minWidth: 0 }}
+    >
       <KpiButton
         label="CPU"
         selected={chartMode === "cpu"}
@@ -43,7 +48,6 @@ export const KpiButtonGroup = ({
             : undefined
         }
         isHigh={cpu.data !== undefined && cpu.data.usage >= 80}
-        isPending={cpu.isPending}
         isError={cpu.isError}
         errorMessage={
           cpu.error instanceof Error ? cpu.error.message : undefined
@@ -55,12 +59,9 @@ export const KpiButtonGroup = ({
         onClick={() => onChartModeChange("ram")}
         primary={ramPercent !== undefined ? `${ramPercent}%` : undefined}
         details={
-          ram.data
-            ? [usedOverTotal(ram.data.used, ram.data.total)]
-            : undefined
+          ram.data ? [usedOverTotal(ram.data.used, ram.data.total)] : undefined
         }
         isHigh={ramPercent !== undefined && ramPercent >= 80}
-        isPending={ram.isPending}
         isError={ram.isError}
         errorMessage={
           ram.error instanceof Error ? ram.error.message : undefined
@@ -77,7 +78,6 @@ export const KpiButtonGroup = ({
             : undefined
         }
         isHigh={diskPercent !== undefined && diskPercent >= 80}
-        isPending={disk.isPending}
         isError={disk.isError}
         errorMessage={
           disk.error instanceof Error ? disk.error.message : undefined
@@ -92,7 +92,6 @@ type KpiButtonProps = {
   primary?: string;
   details?: string[];
   isHigh?: boolean;
-  isPending: boolean;
   isError: boolean;
   errorMessage?: string;
   selected: boolean;
@@ -104,32 +103,52 @@ export const KpiButton = ({
   primary,
   details,
   isHigh = false,
-  isPending,
   isError,
   errorMessage,
   selected,
   onClick,
 }: KpiButtonProps) => {
-  const statusColor = isError || isHigh ? "error.main" : "success.main";
+  const hasData = primary !== undefined;
+  const statusColor = isHigh ? "error.main" : "success.main";
 
+  const onKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      onClick();
+    }
+  };
   return (
-    <Button
-      variant="contained"
-      title={isError ? errorMessage : undefined}
+    <Box
+      role="button"
+      tabIndex={0}
       aria-pressed={selected}
+      aria-busy={!hasData && !isError ? true : undefined}
       onClick={onClick}
+      onKeyDown={onKeyDown}
       sx={{
         border: "2px solid",
-        borderColor: selected ? "success.main" : "divider",
+        borderColor:
+          isError && !hasData
+            ? "error.main"
+            : selected
+              ? "success.main"
+              : "divider",
         borderRadius: 1,
         height: "100%",
+        display: "flex",
         flexDirection: "column",
         alignItems: "flex-start",
         justifyContent: "space-between",
         textAlign: "left",
-        textTransform: "none",
         py: 1,
         px: 1.5,
+        cursor: "pointer",
+        bgcolor: "primary.main",
+        color: "primary.contrastText",
+        outline: "none",
+        "&:focus-visible": {
+          boxShadow: (theme) => `0 0 0 2px ${theme.palette.text.primary}`,
+        },
       }}
     >
       <Typography
@@ -139,15 +158,7 @@ export const KpiButton = ({
       >
         {label}
       </Typography>
-      {isPending ? (
-        <Typography variant="body2" color="text.secondary">
-          Loading
-        </Typography>
-      ) : isError ? (
-        <Typography variant="body2" color="error.main">
-          Error
-        </Typography>
-      ) : primary ? (
+      {hasData ? (
         <Stack spacing={0.25} sx={{ width: "100%", minWidth: 0 }}>
           <Typography
             variant="h5"
@@ -176,7 +187,43 @@ export const KpiButton = ({
             </Typography>
           ))}
         </Stack>
-      ) : null}
-    </Button>
+      ) : isError ? (
+        <Stack spacing={0.75} sx={{ width: "100%", minWidth: 0 }}>
+          <Typography variant="body2" color="error.main">
+            無法取得 {label} 資料
+          </Typography>
+          <Typography
+            role="alert"
+            variant="caption"
+            color="text.secondary"
+            sx={{
+              display: "-webkit-box",
+              overflow: "hidden",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+            }}
+          >
+            {errorMessage ?? "請稍後再試"}
+          </Typography>
+          <Typography
+            variant="caption"
+            color="text.secondary"
+            sx={{
+              display: "-webkit-box",
+              overflow: "hidden",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+            }}
+          >
+            5秒後重試...
+          </Typography>
+        </Stack>
+      ) : (
+        <Stack spacing={0.75} sx={{ width: "100%" }}>
+          <Skeleton variant="rounded" height={28} width="55%" />
+          <Skeleton variant="text" width="70%" />
+        </Stack>
+      )}
+    </Box>
   );
 };
