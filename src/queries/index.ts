@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { getCpuMetrics, getDiskMetrics, getRamMetrics } from "../service";
+import { apiGetCpuMetrics, apiGetDiskMetrics, apiGetRamMetrics } from "../service";
 import { metricsKeys } from "./key";
 
 export function useCpuMetrics() {
   return useQuery({
     queryKey: metricsKeys.cpu,
-    queryFn: getCpuMetrics,
+    queryFn: apiGetCpuMetrics,
     refetchInterval: 1000,
   });
 }
@@ -13,7 +13,7 @@ export function useCpuMetrics() {
 export function useRamMetrics() {
   return useQuery({
     queryKey: metricsKeys.ram,
-    queryFn: getRamMetrics,
+    queryFn: apiGetRamMetrics,
     refetchInterval: 1000,
   });
 }
@@ -21,7 +21,7 @@ export function useRamMetrics() {
 export function useDiskMetrics() {
   return useQuery({
     queryKey: metricsKeys.disk,
-    queryFn: getDiskMetrics,
+    queryFn: apiGetDiskMetrics,
     refetchInterval: 1000,
   });
 }

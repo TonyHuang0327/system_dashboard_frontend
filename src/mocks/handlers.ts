@@ -1,41 +1,31 @@
 import { http, HttpResponse } from "msw";
-import type { CpuMetrics, DiskMetrics, RamMetrics } from "../types";
+import type { CpuResponse, DiskResponse, RamResponse } from "../types";
+
+const GiB = 1024 ** 3;
 
 export const handlers = [
   http.get("*/api/cpu", () => {
-    const body: CpuMetrics = {
-      name: "i5-14400F",
+    const body: CpuResponse = {
+      cpuName: "i5-14400F",
+      coreNumber: 10,
       usage: 30,
-      temperature: 75,
       timestamp: new Date().toISOString(),
     };
     return HttpResponse.json(body);
   }),
   http.get("*/api/ram", () => {
-    const body: RamMetrics = {
-      max: 33554432,
-      used: 16777216,
+    const body: RamResponse = {
+      total: 32 * GiB,
+      used: 16 * GiB,
       timestamp: new Date().toISOString(),
     };
     return HttpResponse.json(body);
   }),
   http.get("*/api/disk", () => {
-    const body: DiskMetrics = {
+    const body: DiskResponse = {
+      total: 512 * GiB,
+      used: 180 * GiB,
       timestamp: new Date().toISOString(),
-      disks: [
-        {
-          disk_name: "C:",
-          max: 536870912,
-          used: 188743680,
-          temperature: 41,
-        },
-        {
-          disk_name: "D:",
-          max: 1073741824,
-          used: 419430400,
-          temperature: 38,
-        },
-      ],
     };
     return HttpResponse.json(body);
   }),

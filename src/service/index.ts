@@ -1,14 +1,14 @@
 import { apiClient } from "../lib/api";
-import type { CpuMetrics, DiskMetrics, RamMetrics } from "../types";
+import type { CpuResponse, DiskResponse, RamResponse } from "../types";
 
-export function getCpuMetrics() {
-  return apiClient<CpuMetrics>("/cpu");
+export function apiGetCpuMetrics() {
+  return apiClient<CpuResponse>("/cpu");
 }
 
-export function getRamMetrics() {
-  return apiClient<RamMetrics>("/ram");
+export function apiGetRamMetrics() {
+  return apiClient<RamResponse>("/ram");
 }
 
-export function getDiskMetrics() {
-  return apiClient<DiskMetrics>("/disk");
+export function apiGetDiskMetrics() {
+  return apiClient<DiskResponse>("/disk");
 }

@@ -27,7 +27,7 @@ export function useRamHistory() {
         ...prev,
         {
           timestamp: data.timestamp,
-          usage: Math.round((data.used / data.max) * 100),
+          usage: Math.round((data.used / data.total) * 100),
         },
       ].slice(-MAX_POINTS);
     });
